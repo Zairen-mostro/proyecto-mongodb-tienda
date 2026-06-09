@@ -6,6 +6,8 @@ Tema: Tienda.
 Entidad 1: Cliente.  
 Entidad 2: Pedido.
 
+URL desplegada: https://proyecto-mongodb-tienda.vercel.app
+
 ## Modelo de datos
 
 La coleccion `customers` guarda clientes con nombre, email, telefono, estado y notas.
@@ -59,7 +61,9 @@ CARRERA:
 GRUPO:  
 TEMA: Tienda  
 URL DESPLEGADA:  
+https://proyecto-mongodb-tienda.vercel.app
 REPOSITORIO GITHUB:  
+https://github.com/Zairen-mostro/proyecto-mongodb-tienda
 USUARIO DEMO: demo@demo.com / Demo1234  
 ENTIDAD 1: Cliente   ENTIDAD 2: Pedido  
 RELACION: Referencia (ObjectId)  
