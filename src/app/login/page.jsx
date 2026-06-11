@@ -11,10 +11,9 @@ export default async function LoginPage({ searchParams }) {
   return (
     <main className="auth-page">
       <section className="auth">
-        <h1>Tienda MongoDB 7</h1>
+        <h1>NovaPOS</h1>
         <p>
-          Proyecto final con autenticacion real, CRUDs relacionados y
-          persistencia en MongoDB Atlas.
+          Acceso al punto de venta, inventario, clientes y pedidos.
         </p>
 
         {params?.error && (

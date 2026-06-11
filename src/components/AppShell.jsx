@@ -6,10 +6,12 @@ export default function AppShell({ user, children }) {
     <div className="shell">
       <header className="topbar">
         <Link className="brand" href="/dashboard">
-          Tienda MongoDB 7
+          NovaPOS
         </Link>
         <nav className="nav">
-          <Link href="/dashboard">Panel</Link>
+          <Link href="/venta">Venta</Link>
+          <Link href="/dashboard">Inicio</Link>
+          <Link href="/productos">Productos</Link>
           <Link href="/clientes">Clientes</Link>
           <Link href="/pedidos">Pedidos</Link>
           <span>{user.email}</span>

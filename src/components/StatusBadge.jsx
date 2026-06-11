@@ -4,7 +4,10 @@ const statusClass = {
   Pendiente: "warning",
   Pagado: "success",
   Enviado: "info",
-  Cancelado: "danger"
+  Cancelado: "danger",
+  Disponible: "success",
+  "Bajo stock": "warning",
+  Agotado: "danger"
 };
 
 export default function StatusBadge({ children }) {

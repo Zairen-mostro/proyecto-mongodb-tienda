@@ -7,6 +7,7 @@ import { requireUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Customer from "@/models/Customer";
 import Order from "@/models/Order";
+import Product from "@/models/Product";
 import { date, money } from "@/lib/format";
 
 function escapeRegex(value) {
@@ -24,9 +25,10 @@ export default async function OrdersPage({ searchParams }) {
   if (q) filter.product = new RegExp(escapeRegex(q), "i");
   if (status) filter.status = status;
 
-  const [orders, customers] = await Promise.all([
+  const [orders, customers, products] = await Promise.all([
     Order.find(filter).populate("customer", "name email").sort({ createdAt: -1 }).lean(),
-    Customer.find().sort({ name: 1 }).lean()
+    Customer.find().sort({ name: 1 }).lean(),
+    Product.find().sort({ name: 1 }).lean()
   ]);
 
   return (
@@ -53,7 +55,7 @@ export default async function OrdersPage({ searchParams }) {
       <section className="workspace-grid">
         <form action={createOrderAction} className="form">
           <h2>Nuevo pedido</h2>
-          <OrderFields customers={customers} />
+          <OrderFields customers={customers} products={products} />
           <button className="button" type="submit">
             Guardar pedido
           </button>
@@ -135,7 +137,7 @@ export default async function OrdersPage({ searchParams }) {
   );
 }
 
-export function OrderFields({ order, customers }) {
+export function OrderFields({ order, customers, products = [] }) {
   return (
     <>
       <div className="field">
@@ -156,7 +158,19 @@ export function OrderFields({ order, customers }) {
       </div>
       <div className="field">
         <label htmlFor="product">Producto</label>
-        <input id="product" name="product" defaultValue={order?.product} minLength="2" required />
+        <input
+          id="product"
+          name="product"
+          list="product-options"
+          defaultValue={order?.product}
+          minLength="2"
+          required
+        />
+        <datalist id="product-options">
+          {products.map((product) => (
+            <option key={product._id.toString()} value={product.name} />
+          ))}
+        </datalist>
       </div>
       <div className="field">
         <label htmlFor="quantity">Cantidad</label>

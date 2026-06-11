@@ -7,6 +7,10 @@ const orderSchema = new mongoose.Schema(
       ref: "Customer",
       required: [true, "El cliente es obligatorio."]
     },
+    productRef: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Product"
+    },
     product: {
       type: String,
       required: [true, "El producto es obligatorio."],

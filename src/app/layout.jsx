@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Tienda MongoDB 7",
-  description: "Proyecto final con login, CRUDs y MongoDB Atlas"
+  title: "NovaPOS",
+  description: "Sistema de punto de venta"
 };
 
 export default function RootLayout({ children }) {

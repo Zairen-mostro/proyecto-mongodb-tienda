@@ -46,6 +46,7 @@ const customerSchema = new mongoose.Schema(
 const orderSchema = new mongoose.Schema(
   {
     customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer", required: true },
+    productRef: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
     product: { type: String, required: true, trim: true, minlength: 2 },
     quantity: { type: Number, required: true, min: 1 },
     unitPrice: { type: Number, required: true, min: 0 },
@@ -59,19 +60,43 @@ const orderSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+const productSchema = new mongoose.Schema(
+  {
+    sku: { type: String, required: true, trim: true, uppercase: true },
+    name: { type: String, required: true, trim: true, minlength: 2 },
+    category: { type: String, required: true, trim: true },
+    price: { type: Number, required: true, min: 0 },
+    stock: { type: Number, required: true, min: 0 },
+    status: {
+      type: String,
+      enum: ["Disponible", "Bajo stock", "Agotado"],
+      default: "Disponible"
+    }
+  },
+  { timestamps: true }
+);
+
 userSchema.index({ email: 1 }, { unique: true });
 customerSchema.index({ email: 1 }, { unique: true });
 orderSchema.index({ customer: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
+productSchema.index({ sku: 1 }, { unique: true });
+productSchema.index({ name: "text", category: "text", sku: "text" });
 
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 const Customer = mongoose.models.Customer || mongoose.model("Customer", customerSchema);
 const Order = mongoose.models.Order || mongoose.model("Order", orderSchema);
+const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 
 async function run() {
   await mongoose.connect(uri, { dbName: process.env.MONGODB_DB || undefined });
 
-  await Promise.all([User.deleteMany({}), Order.deleteMany({}), Customer.deleteMany({})]);
+  await Promise.all([
+    User.deleteMany({}),
+    Order.deleteMany({}),
+    Customer.deleteMany({}),
+    Product.deleteMany({})
+  ]);
 
   const passwordHash = await bcrypt.hash("Demo1234", 10);
   await User.create({
@@ -97,28 +122,82 @@ async function run() {
     }
   ]);
 
+  const [laptop, mouse, monitor, teclado, audifonos] = await Product.create([
+    {
+      sku: "LAP-001",
+      name: "Laptop Lenovo ThinkPad",
+      category: "Computo",
+      price: 18500,
+      stock: 8,
+      status: "Disponible"
+    },
+    {
+      sku: "MOU-014",
+      name: "Mouse inalambrico",
+      category: "Accesorios",
+      price: 450,
+      stock: 22,
+      status: "Disponible"
+    },
+    {
+      sku: "MON-024",
+      name: "Monitor 24 pulgadas",
+      category: "Pantallas",
+      price: 3200,
+      stock: 4,
+      status: "Bajo stock"
+    },
+    {
+      sku: "TEC-010",
+      name: "Teclado mecanico",
+      category: "Accesorios",
+      price: 980,
+      stock: 12,
+      status: "Disponible"
+    },
+    {
+      sku: "AUD-101",
+      name: "Audifonos Bluetooth",
+      category: "Audio",
+      price: 1250,
+      stock: 0,
+      status: "Agotado"
+    }
+  ]);
+
   await Order.create([
     {
       customer: ana._id,
-      product: "Laptop Lenovo ThinkPad",
+      productRef: laptop._id,
+      product: laptop.name,
       quantity: 1,
-      unitPrice: 18500,
+      unitPrice: laptop.price,
       status: "Pagado",
       notes: "Incluye garantia extendida."
     },
     {
       customer: ana._id,
-      product: "Mouse inalambrico",
+      productRef: mouse._id,
+      product: mouse.name,
       quantity: 2,
-      unitPrice: 450,
+      unitPrice: mouse.price,
       status: "Enviado"
     },
     {
       customer: luis._id,
-      product: "Monitor 24 pulgadas",
+      productRef: monitor._id,
+      product: monitor.name,
       quantity: 1,
-      unitPrice: 3200,
+      unitPrice: monitor.price,
       status: "Pendiente"
+    },
+    {
+      customer: luis._id,
+      productRef: teclado._id,
+      product: teclado.name,
+      quantity: 1,
+      unitPrice: teclado.price,
+      status: "Pagado"
     }
   ]);
 

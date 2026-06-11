@@ -8,6 +8,7 @@ import { requireUser } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import Customer from "@/models/Customer";
 import Order from "@/models/Order";
+import Product from "@/models/Product";
 import { date, money } from "@/lib/format";
 
 export default async function OrderDetailPage({ params }) {
@@ -15,9 +16,10 @@ export default async function OrderDetailPage({ params }) {
   const { id } = await params;
   await connectDB();
 
-  const [order, customers] = await Promise.all([
+  const [order, customers, products] = await Promise.all([
     Order.findById(id).populate("customer", "name email phone").lean(),
-    Customer.find().sort({ name: 1 }).lean()
+    Customer.find().sort({ name: 1 }).lean(),
+    Product.find().sort({ name: 1 }).lean()
   ]);
 
   if (!order) notFound();
@@ -37,7 +39,7 @@ export default async function OrderDetailPage({ params }) {
       <section className="grid">
         <form action={updateOrderAction.bind(null, id)} className="form">
           <h2>Editar pedido</h2>
-          <OrderFields order={order} customers={customers} />
+          <OrderFields order={order} customers={customers} products={products} />
           <button className="button" type="submit">
             Actualizar
           </button>
